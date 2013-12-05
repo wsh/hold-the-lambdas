@@ -63,6 +63,19 @@
 					</section>
 					
 					<section>
+					    <pre><code class="haskell" data-trim>
+sum :: Num a => a -> a -> a
+sum x y = x + y
+
+sum 2 3
+                        </code></pre>
+                        <pre><code class="scala" data-trim>
+def sum(x: Int)(y: Int): Int = {
+    x + y
+}
+
+sum(2)(3)
+                        </code></pre>
                         <pre><code class="java" data-trim>
 public int sum(int a, int b){
     return a + b;
@@ -129,6 +142,10 @@ def sumOfSquares(xs: Array[Int]): Int = {
     xs.foldLeft(0)((sum, x) => sum + (x * x))
 }
                         </code></pre>
+                        <pre><code class="haskell" data-trim>
+sumOfSquares :: Num a => [a] -> a
+sumOfSquares xs = foldl (\sum x -> sum + (x * x)) 0 xs
+                        </code></pre>
                     </section>
                     
                     <section>
@@ -137,11 +154,23 @@ def sumOfSquares(xs: Array[Int]): Int = {
     xs.map(x => x * x).reduceLeft((sum, x) => sum + x)
 }
                         </code></pre>
+                        <pre><code class="haskell" data-trim>
+sumOfSquares :: Num a => [a] -> a
+sumOfSquares xs = foldl1 (\sum x -> sum + x) (map (\x -> x * x) xs)
+                        </code></pre>
                     </section>
                     
                     <section>
-                    <pre><code class="java" data-trim>
-public static int sumSquares(Integer[] input) {
+                        <h3>Functions in Java</h3>
+                        <ul>
+                            <li class="increment"><strong>Guava</strong></li>
+                            <li class="increment">Apache Commons</li>
+                        </ul>
+                    </section>
+                    
+                    <section>
+                        <pre><code class="java" data-trim>
+public static int sumSquares(final Integer[] input) {
     final Collection&lt;Integer&gt; squared =
             Collections2.transform(Arrays.asList(input),
                                    new Function&lt;Integer, Integer&gt;() {
@@ -155,7 +184,7 @@ public static int sumSquares(Integer[] input) {
     }
     return sum;
 }
-                    </code></pre>
+                        </code></pre>
                     </section>
                     
                     <section>
@@ -169,7 +198,7 @@ public static int sumSquares(Integer[] input) {
                     </section>
                     
                     <section>
-                    <pre><code class="java" data-trim>
+                        <pre><code class="java" data-trim>
 public static int sumSquares(int[] input) {
     for(int i=0; i&lt;input.length; i++){
         input[i] = input[i] * input[i];
@@ -180,7 +209,7 @@ public static int sumSquares(int[] input) {
     }
     return sum;
 }
-                    </code></pre>
+                        </code></pre>
                     </section>
                     
                     <section>
@@ -198,10 +227,10 @@ public static int sumSquares(int[] input) {
                     </section>
                     
                     <section>
-                    <pre><code class="java" data-trim>
-public static int sumSquares(Integer[] input) {
+                        <pre><code class="java" data-trim>
+public static int sumSquares(final Collection&lt;Integer&gt; input) {
     final Collection&lt;Integer&gt; squared =
-            Collections2.transform(Arrays.asList(input),
+            Collections2.transform(input,
                                    new Function&lt;Integer, Integer&gt;() {
         public Integer apply(Integer integer) {
             return integer * integer;
@@ -213,12 +242,12 @@ public static int sumSquares(Integer[] input) {
     }
     return sum;
 }
-                    </code></pre>
+                        </code></pre>
                     </section>
                     
                     <section>
-                    <pre><code class="java" data-trim>
-public static int sumProcessed(Integer[] input,
+                        <pre><code class="java" data-trim>
+public static int sumProcessed(final Collection&lt;Integer&gt; input,
     Function&lt;Integer, Integer&gt; processor) {
     
     final Collection&lt;Integer&gt; processed =
@@ -229,16 +258,17 @@ public static int sumProcessed(Integer[] input,
     }
     return sum;
 }
-                    </code></pre>
+                        </code></pre>
                     </section>
                     
                     <section>
-                    <pre><code class="java" data-trim>
-public static &lt;T&gt; T reduce(final T[] input, final Function&lt;T, T&gt; mapper,
+                        <pre><code class="java" data-trim>
+public static &lt;T&gt; T reduce(final Collection&lt;T&gt; input,
+        final Function&lt;T, T&gt; mapper,
         final Function&lt;T, Function&lt;T, T&gt;&gt; reducer, final T initial) {
         
         final Collection&lt;T&gt; mapped =
-                Collections2.transform(Arrays.asList(input), mapper);
+                Collections2.transform(input, mapper);
         T result = initial;
         for(T value : mapped){
             final Function&lt;T, T&gt; toApply = reducer.apply(result);
@@ -246,14 +276,14 @@ public static &lt;T&gt; T reduce(final T[] input, final Function&lt;T, T&gt; map
         }
         return result;
 }
-                    </code></pre>
+                        </code></pre>
                     </section>
                     
                     <section>
-                    <pre><code class="java" data-trim>
- reduce(new Integer[]{1, 2}, 
+                        <pre><code class="java" data-trim>
+ reduce(Lists.newArrayList(1, 2), 
         new Function&lt;Integer, Integer&gt;() {
-            public Integer apply(Integer integer) {
+            public Integer apply(final Integer integer) {
                 return integer * integer;
             }
         }, new Function&lt;Integer, Function&lt;Integer, Integer&gt;&gt;() {
@@ -265,27 +295,62 @@ public static &lt;T&gt; T reduce(final T[] input, final Function&lt;T, T&gt; map
                 };
             };
         }, 0));
-                    </code></pre>
+                        </code></pre>
                     </section>
                     
                     <section>
-                    <pre><code class="java" data-trim>
+                        <pre><code class="java" data-trim>
+public static &lt;T&gt; T reduce(final Iterator&lt;T&gt; input, final Function&lt;T, T&gt; mapper,
+                           final Function&lt;T, Function&lt;T, T&gt;&gt; reducer,
+                           final T initial){
+    if(!input.hasNext()){
+        return initial;
+    } else {
+        final T next =
+            reducer.apply(initial).apply(mapper.apply(input.next()));
+        return reduce(input, mapper, reducer, next);
+    }
+}
+                        </code></pre>
+                    </section>
+                    
+                    <section>
+                        <pre><code class="java" data-trim>
+ reduce(Iterators.forArray(1, 2), 
+        new Function&lt;Integer, Integer&gt;() {
+            public Integer apply(final Integer integer) {
+                return integer * integer;
+            }
+        }, new Function&lt;Integer, Function&lt;Integer, Integer&gt;&gt;() {
+            public Function&lt;Integer, Integer&gt; apply(final Integer a) {
+                return new Function&lt;Integer, Integer&gt;() {
+                    public Integer apply(final Integer b) {
+                        return a + b;
+                    }
+                };
+            };
+        }, 0));
+                        </code></pre>
+                    </section>
+                    
+                    <section>
+                        <pre><code class="java" data-trim>
 Executors.newSingleThreadExecutor().submit(new Runnable() {
     public void run() {
         // ...
     }
 });
-                    </code></pre>
+                        </code></pre>
                     </section>
                     
                     <section>
-                    <pre><code class="java" data-trim>
+                        <pre><code class="java" data-trim>
 Collections.sort(collection, new Comparator&lt;T&gt;() {
     public int compare(T o1, T o2) {
         // ...
     }
 });
-                    </code></pre>
+                        </code></pre>
                     </section>
                     
                     <section>
@@ -293,8 +358,8 @@ Collections.sort(collection, new Comparator&lt;T&gt;() {
                     </section>
                     
                     <section>
-                    <pre><code class="java" data-trim>
-List&lt;String&gt; presenters =
+                        <pre><code class="java" data-trim>
+Collection&lt;String&gt; presenters =
     Lists.newArrayList("Gray", "Michael", "Caroline", "Will");
 Predicate&lt;String&gt; query = Predicates.or(
                                  new Predicate&lt;String&gt;() {
@@ -306,8 +371,34 @@ Predicate&lt;String&gt; query = Predicates.or(
                                          return o.startsWith("C");
                                      }
                                  });
-Collections2.filter(presenters, query);
-                    </code></pre>
+Collections2.filter(presenters, query); // { "Michael", "Caroline" }
+                        </code></pre>
+                    </section>
+                    
+                    <section>
+                        <pre><code class="java" data-trim>
+Collection&lt;String&gt; presenters =
+    Lists.newArrayList("Gray", "Michael", "Caroline", "Will");
+final Function&lt;String, String&gt; capitalsReverse =
+        Functions.compose(new Function&lt;String, String&gt;() {
+                              public String apply(final String s) {
+                                  return s.toUpperCase();
+                              }
+                          }, new Function&lt;String, String&gt;() {
+                              public String apply(final String s) {
+                                  final char[] chars = s.toCharArray();
+                                  for(int i = 0, j = chars.length - 1;
+                                      i &lt; chars.length / 2; i++, j--) {
+                                      char temp = chars[i];
+                                      chars[i] = chars[j];
+                                      chars[j] = temp;
+                                  }
+                                  return new String(chars);
+                              }
+                          }
+        );
+Collections2.transform(presenters, capitalsReverse); // { "YARG", "LEAHCIM", "ENILORAC", "LLIW" }
+                        </code></pre>
                     </section>
                 </section>
                 
@@ -378,11 +469,20 @@ presenters.stream()
                     <section>
                         <h3>Streams support</h3>
                         <ul>
-                            <li class="fragment"><code>map</code></li>
-                            <li class="fragment"><code>flatMap</code></li>
-                            <li class="fragment"><code>filter</code></li>
-                            <li class="fragment"><code>reduce</code></li>
-                            <li class="fragment"><code>findFirst</code></li>
+                            <li class="fragment">Intermediate operations
+                                <ul>
+                                    <li class="fragment"><code>map</code></li>
+                                    <li class="fragment"><code>flatMap</code></li>
+                                    <li class="fragment"><code>filter</code></li>
+                                </ul>
+                            </li>
+                            <li class="fragment">Terminal operations
+                                <ul>
+                                    <li class="fragment"><code>reduce</code></li>
+                                    <li class="fragment"><code>forEach</code></li>
+                                    <li class="fragment"><code>findFirst</code></li>
+                                </ul>
+                            </li>
                         </ul>
                     </section>
                     
@@ -485,6 +585,25 @@ res3: Option[Int] = None
                         <pre class="fragment roll-in"><code class="scala" data-trim>
 scala> x.getOrElse(4, 5)
 res4: Option[Int] = 5
+                        </code></pre>
+                    </section>
+                    
+                    <section>
+                        <pre><code class="haskell" data-trim>
+Prelude> import qualified Data.Map.Lazy as M
+Prelude M> let x = M.fromList[(1,2)]
+                        </code></pre>
+                        <pre class="fragment roll-in"><code class="haskell" data-trim>
+Prelude M> M.lookup 1 x
+Just 2
+                        </code></pre>
+                        <pre class="fragment roll-in"><code class="haskell" data-trim>
+Prelude M> M.lookup 3 x
+Nothing
+                        </code></pre>
+                        <pre class="fragment roll-in"><code class="haskell" data-trim>
+Prelude M> M.findWithDefault 5 4 x
+5
                         </code></pre>
                     </section>
                     
