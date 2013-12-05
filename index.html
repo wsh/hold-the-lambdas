@@ -136,7 +136,6 @@ public static int sumSquares(Integer[] input) {
     final Collection&lt;Integer&gt; squared =
             Collections2.transform(Arrays.asList(input),
                                    new Function&lt;Integer, Integer&gt;() {
-        @Override
         public Integer apply(Integer integer) {
             return integer * integer;
         }
@@ -157,7 +156,7 @@ public static int sumSquares(Integer[] input) {
                     </section>
                     
                     <section>
-                        <h2>Safety</h2>
+                        <h2>(Probably more) safety</h2>
                     </section>
                     
                     <section>
@@ -176,7 +175,7 @@ public static int sumSquares(int[] input) {
                     </section>
                     
                     <section>
-                        <h2>Performance</h2>
+                        <h2>(Possibly better) performance</h2>
                     </section>
                     
                     <section>
@@ -195,7 +194,6 @@ public static int sumSquares(Integer[] input) {
     final Collection&lt;Integer&gt; squared =
             Collections2.transform(Arrays.asList(input),
                                    new Function&lt;Integer, Integer&gt;() {
-        @Override
         public Integer apply(Integer integer) {
             return integer * integer;
         }
@@ -246,15 +244,12 @@ public static &lt;T&gt; T reduce(final T[] input, final Function&lt;T, T&gt; map
                     <pre><code class="java" data-trim>
  reduce(new Integer[]{1, 2}, 
         new Function&lt;Integer, Integer&gt;() {
-            @Override
             public Integer apply(Integer integer) {
                 return integer * integer;
             }
         }, new Function&lt;Integer, Function&lt;Integer, Integer&gt;&gt;() {
-            @Override
             public Function&lt;Integer, Integer&gt; apply(final Integer a) {
                 return new Function&lt;Integer, Integer&gt;() {
-                    @Override
                     public Integer apply(final Integer b) {
                         return a + b;
                     }
@@ -263,12 +258,87 @@ public static &lt;T&gt; T reduce(final T[] input, final Function&lt;T, T&gt; map
         }, 0));
                     </code></pre>
                     </section>
+                    
+                    <section>
+                    <pre><code class="java" data-trim>
+ reduce(new Integer[]{1, 2}, 
+        new Function&lt;Integer, Integer&gt;() {
+            public Integer apply(Integer integer) {
+                return integer * integer;
+            }
+        }, new Function&lt;Integer, Function&lt;Integer, Integer&gt;&gt;() {
+            public Function&lt;Integer, Integer&gt; apply(final Integer a) {
+                return new Function&lt;Integer, Integer&gt;() {
+                    public Integer apply(final Integer b) {
+                        return a + b;
+                    }
+                };
+            };
+        }, 0));
+                    </code></pre>
+                    </section>
+                    
+                    <section>
+                    <pre><code class="java" data-trim>
+Executors.newSingleThreadExecutor().submit(new Runnable() {
+    public void run() {
+        // ...
+    }
+});
+                    </code></pre>
+                    </section>
+                    
+                    <section>
+                    <pre><code class="java" data-trim>
+Collections.sort(collection, new Comparator&lt;T&gt;() {
+    public int compare(T o1, T o2) {
+        // ...
+    }
+});
+                    </code></pre>
+                    </section>
+                    
+                    <section>
+                        <h2>Dependency injection for behavior</h2>
+                    </section>
+                    
+                    <section>
+                    <pre><code class="java" data-trim>
+List&lt;String&gt; strings =
+    Lists.newArrayList("Gray", "Michael", "Caroline", "Martin");
+Predicate&lt;String&gt; and = Predicates.or(
+                             new Predicate&lt;String&gt;() {
+                                 public boolean apply(String o) {
+                                     return o.startsWith("M");
+                                 }
+                             }, new Predicate&lt;String&gt;() {
+                                 public boolean apply(String o) {
+                                     return o.startsWith("C");
+                                 }
+                             }
+);
+                    </code></pre>
+                    </section>
                 </section>
                 
                 <section>
                     <section>
-                        <h2>For all Java's flaws</h2>
-                        <h2>FP can make ours better</h2>
+                        <h2>Java 8</h2>
+                    </section>
+                    
+                    <section>
+                    <pre><code class="java" data-trim>
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+                    </code></pre>
+                    </section>
+                    
+                    <section>
+                    <pre><code class="java" data-trim>
+import java.util.function.Function;
+import java.util.function.Predicate;
+                    </code></pre>
+                    <h3>(not quite)</h3>
                     </section>
                 </section>
                 
@@ -332,21 +402,11 @@ bar.or(5); // 5
                     </section>
                 </section>
                 
-                <section>
-                    <section>
-                        <h2>Exhibit B:</h2><code>Immutable________</code>
-                    </section>
-                    
-                    <section>
-                        <h2>Functional languages</h2>
-                        <h2>love Immutability</h2>
-                    </section>
-                </section>
-
 				<section>
 					<h1>Thanks!</h1>
+					<h4><a href="http://twitter.com/_wsh">@_wsh</a></h3>
+					<h4><a href="mailto:will.hayworth@lab49.com">will.hayworth@lab49.com</a></h3>
 				</section>
-
 			</div>
 
 		</div>
