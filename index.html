@@ -92,7 +92,7 @@
                     
                     <section>
                         <pre><code class="java" data-trim>
-public static int sumOfSquares(int[] input){
+public static int sumOfSquares(int[] input) {
     int sum = 0;
     for(int i: input){
         sum += i * i;
@@ -103,63 +103,165 @@ public static int sumOfSquares(int[] input){
                     </section>
                     
                     <section>
-                    <pre><code class="scala" data-trim>
-scala> val integers = List(1,2,3,4,5)
-integers: List[Int] = List(1, 2, 3, 4, 5)
-
-scala> integers.map(x => x * 2)
-res0: List[Int] = List(2, 4, 6, 8, 10)
-                    </code></pre>
+                        <pre><code class="scala" data-trim>
+def sumOfSquares(xs: Array[Int]): Int = {
+    var sum = 0
+    for(i <- xs){
+      sum += i * i
+    }
+    sum
+}
+                        </code></pre>
+                    </section>
+                    
+                    <section>
+                        <pre><code class="scala" data-trim>
+def sumOfSquares(xs: Array[Int]): Int = {
+    xs.foldLeft(0)((sum, x) => sum + (x * x))
+}
+                        </code></pre>
+                    </section>
+                    
+                    <section>
+                        <pre><code class="scala" data-trim>
+def sumOfSquares(xs: Array[Int]): Int = {
+    xs.map(x => x * x).reduceLeft((sum, x) => sum + x)
+}
+                        </code></pre>
                     </section>
                     
                     <section>
                     <pre><code class="java" data-trim>
-List&lt;Integer&gt; integers = Lists.newArrayList(1, 2, 3, 4, 5);
-Function&lt;Integer, Integer&gt; doubler = new Function&lt;&gt;() {
-    @Override
-    public Integer apply(@Nullable final Integer integer) {
-        return integer.intValue() * 2;
+public static int sumSquares(Integer[] input) {
+    final Collection&lt;Integer&gt; squared =
+            Collections2.transform(Arrays.asList(input),
+                                   new Function&lt;Integer, Integer&gt;() {
+        @Override
+        public Integer apply(Integer integer) {
+            return integer * integer;
+        }
+    });
+    int sum = 0;
+    for(int i: squared){
+        sum += i;
     }
-};
-final Collection&lt;Integer&gt; doubled = Collections2.transform(integers, doubler);
+    return sum;
+}
                     </code></pre>
-                    </section>
-				</section>
-
-                <section>
-                    <section>
-                        <h2>I get it but...</h2>
-                    </section>
-                    
-                    <section>
-                        <h2>We work in Java</h2>
-                    </section>   
-                    
-                    <section>
-                        <h2>Mixed bag from an FP standpoint</h2>
-                    </section> 
-                    
-                    <section>
-                        <ul>
-                            <li class="fragment">Constrained state: <strong>encapsulation</strong></li>
-                            <li class="fragment">First-class functions: <strong>anonymous inner classes</strong></li>
-                        </ul>
-                    </section>
-                    
-                    <section>
-                        <pre><code class="java" data-trim>
-element.addListener(new NotARealClosure() {
-    public void someCallback(Event e)
-    {
-        // ugh.
-    }
-});                     </code></pre>
                     </section>
                     
                     <section>
                         <blockquote cite="http://code.google.com/p/guava-libraries/wiki/FunctionalExplained">
                         These [functional idioms] are by far the most easily (and most commonly) abused parts of Guava, and when you go to preposterous lengths to make your code "a one-liner," <strong>the Guava team weeps.</strong>
                         </blockquote>
+                    </section>
+                    
+                    <section>
+                        <h2>Safety</h2>
+                    </section>
+                    
+                    <section>
+                    <pre><code class="java" data-trim>
+public static int sumSquares(int[] input) {
+    for(int i=0; i&lt;input.length; i++){
+        input[i] = input[i] * input[i];
+    }
+    int sum = 0;
+    for(int i: input){
+        sum += i;
+    }
+    return sum;
+}
+                    </code></pre>
+                    </section>
+                    
+                    <section>
+                        <h2>Performance</h2>
+                    </section>
+                    
+                    <section>
+                        <a href="http://research.google.com/archive/mapreduce.html"><img src="img/google-mapreduce.png" alt="MapReduce paper from Google" /></a>
+                    </section>
+				</section>
+
+                <section>
+                    <section>
+                        <h2>Real separation of concerns</h2>
+                    </section>
+                    
+                    <section>
+                    <pre><code class="java" data-trim>
+public static int sumSquares(Integer[] input) {
+    final Collection&lt;Integer&gt; squared =
+            Collections2.transform(Arrays.asList(input),
+                                   new Function&lt;Integer, Integer&gt;() {
+        @Override
+        public Integer apply(Integer integer) {
+            return integer * integer;
+        }
+    });
+    int sum = 0;
+    for(int i: squared){
+        sum += i;
+    }
+    return sum;
+}
+                    </code></pre>
+                    </section>
+                    
+                    <section>
+                    <pre><code class="java" data-trim>
+public static int sumProcessed(Integer[] input,
+    Function&lt;Integer, Integer&gt; processor) {
+    
+    final Collection&lt;Integer&gt; processed =
+            Collections2.transform(Arrays.asList(input), processor);
+    int sum = 0;
+    for(int i: processed){
+        sum += i;
+    }
+    return sum;
+}
+                    </code></pre>
+                    </section>
+                    
+                    <section>
+                    <pre><code class="java" data-trim>
+public static &lt;T&gt; T reduce(final T[] input, final Function&lt;T, T&gt; mapper,
+        final Function&lt;T, Function&lt;T, T&gt;&gt; reducer, final T initial) {
+        
+        final Collection&lt;T&gt; mapped =
+                Collections2.transform(Arrays.asList(input), mapper);
+        T result = initial;
+        for(T value : mapped){
+            final Function&lt;T, T&gt; toApply = reducer.apply(result);
+            result = toApply.apply(value);
+        }
+        return result;
+}
+                    </code></pre>
+                    </section>
+                    
+                    <section>
+                    <pre><code class="java" data-trim>
+ reduce(new Integer[]{1, 2}, 
+        new Function&lt;Integer, Integer&gt;() {
+            @Override
+            public Integer apply(Integer integer) {
+                return integer * integer;
+            }
+        }, new Function&lt;Integer, Function&lt;Integer, Integer&gt;&gt;() {
+            @Override
+            public Function&lt;Integer, Integer&gt; apply(final Integer a) {
+                return new Function&lt;Integer, Integer&gt;() {
+                    @Override
+                    public Integer apply(final Integer b) {
+                        return a + b;
+                    }
+                };
+            };
+        }, 0));
+                    </code></pre>
                     </section>
                 </section>
                 
