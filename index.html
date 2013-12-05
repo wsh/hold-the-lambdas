@@ -15,7 +15,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 		<link rel="stylesheet" href="css/reveal.min.css">
-		<link rel="stylesheet" href="css/theme/sky.css" id="theme">
+		<link rel="stylesheet" href="css/theme/night.css" id="theme">
 
 		<!-- For syntax highlighting -->
 		<link rel="stylesheet" href="lib/css/zenburn.css">
@@ -55,15 +55,15 @@
 				</section>
 
 				<section>
-					<h2>What's Functional Programming?</h2>
+					<h2>What's functional programming?</h2>
 				</section>
 				
 				<section>
 				    <section>
                         <h2>What are functions?</h2>
                         <ul>
-                            <li class="fragment">Functions are free variables with operations to be performed on them.</li>
-                            <li class="fragment">Application (or partial application) requires resolving those variables.</li>
+                            <li class="fragment">Functions consist of operations and any number of free variables to be used in them.</li>
+                            <li class="fragment">Application requires resolving those variables.</li>
                         </ul>
 					</section>
 					
@@ -80,7 +80,7 @@ sum(2, 3);
 				
 				<section>
 				    <section>
-					    <h2>What's functional <strong>programming</strong>?</h2>
+					    <h2>What's functional <em>programming</em>?</h2>
 					</section>
 					<section>
 					    <h2>Is it...</h2>
@@ -322,6 +322,10 @@ Collections2.filter(presenters, query);
                     </section>
                     
                     <section>
+                        <img src="img/j8l_cover.jpg" alt="Java 8 Lambdas in Action" />
+                    </section>
+                    
+                    <section>
                         <h3>Everything until now has been Java 7 thanks to</h3>
                         <pre><code class="java" data-trim>
 import com.google.common.base.Function;
@@ -400,25 +404,52 @@ presenters.parallelStream()
                     <section>
                         <pre><code class="java" data-trim>
 package java.util.function;
-/* ... */
 @FunctionalInterface
-public interface Predicate&lt;T&gt; {
-    /* ... */
-    boolean test(T t);
-    /* other great default methods */
+public interface Function&lt;T, R&gt; {
+    R apply(T t);  
+    default &lt;V&gt; Function&lt;V, R&gt;
+        compose(Function&lt;? super V, ? extends T&gt; before) {
+        Objects.requireNonNull(before);
+        return (V v) -&gt; apply(before.apply(v));
+    }
+    default &lt;V&gt; Function&lt;T, V&gt;
+        andThen(Function&lt;? super R, ? extends V&gt; after) {
+        Objects.requireNonNull(after);
+        return (T t) -&gt; after.apply(apply(t));
+    }
+    static &lt;T&gt; Function&lt;T, T&gt; identity() {
+        return t -&gt; t;
+    }
 }
                         </code></pre>
+                        <small>excerpt from java/util/function/Function.java</small>
+                    </section>
+                    
+                    <section>
+                        <pre><code class="scala" data-trim>
+package scala
+
+trait Function1[-T1, +R] extends AnyRef { self =>
+  def apply(v1: T1): R
+
+  def compose[A](g: A => T1): A => R = { x => apply(g(x)) }
+
+  def andThen[A](g: R => A): T1 => A = { x => g(apply(x)) }
+}
+                        </code></pre>
+                        <small>excerpt from scala/Function1.scala</small>
                     </section>
                 </section>
                 
                 <section>
                     <section>
-                        <h2>One other useful thing:</h2><code>Option</code>
+                        <h3>One other useful thing:</h3>
+                        <h2>Option</h2>
                     </section>
                     
                     <section>
                         <h2>Functional languages</h2>
-                        <h2>love Option</h2>
+                        <h2>love Options</h2>
                     </section>
                     
                     <section>
@@ -445,7 +476,7 @@ res4: Option[Int] = 5
                     </section>
                     
                     <section>
-                        <h3>...and it's everywhere</h3>
+                        <h3>...it's everywhere</h3>
                     </section>
                     
                     <section>
@@ -502,7 +533,7 @@ import java.util.Optional;
                         <h3>In short</h3>
                         <ul>
                             <li>Java 8's lambda syntax doesn't change that much.</li>
-                            <li class="fragment">Java 8 does more to harness the underlying power that FP-style programs provide with constructs like <code>Stream</code>s.</li>
+                            <li class="fragment">Java 8 does more to harness the underlying power that FP-style programs provide with constructs like streams.</li>
                             <li class="fragment">You can harness many of the benefits of functional thinking in Java today if you try for immutability, minimal state, and vigorous separation of concerns.</li>
                         </ul>
                     </section>
