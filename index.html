@@ -6,7 +6,7 @@
 
 		<title>Hold the Lambdas!</title>
 
-		<meta name="description" content="Functional programming for the working Java programmer--given at DevIgnition 2013.">
+		<meta name="description" content="Functional programming today for the working Java programmer--at DevIgnition 2013.">
 		<meta name="author" content="Will Hayworth">
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
@@ -48,20 +48,34 @@
 					</p>
 					<p>
 					    <small>DevIgnition</small>
+					</p>
+					<p>
 						<small>December 6, 2013</small>
 					</p>
 				</section>
 
 				<section>
-					<h2>What's FP?</h2>
+					<h2>What's Functional Programming?</h2>
 				</section>
 				
 				<section>
-					<h2>What are functions?</h2>
-					<ul>
-					    <li class="fragment">Functions are free variables with operations to be performed on them.</li>
-					    <li class="fragment">Application (or partial application) entails resolving those variables</li>
-					</ul>
+				    <section>
+                        <h2>What are functions?</h2>
+                        <ul>
+                            <li class="fragment">Functions are free variables with operations to be performed on them.</li>
+                            <li class="fragment">Application (or partial application) requires resolving those variables.</li>
+                        </ul>
+					</section>
+					
+					<section>
+                        <pre><code class="java" data-trim>
+public int sum(int a, int b){
+    return a + b;
+}
+
+sum(2, 3);
+                        </code></pre>
+                    </section>	    
 				</section>
 				
 				<section>
@@ -261,25 +275,6 @@ public static &lt;T&gt; T reduce(final T[] input, final Function&lt;T, T&gt; map
                     
                     <section>
                     <pre><code class="java" data-trim>
- reduce(new Integer[]{1, 2}, 
-        new Function&lt;Integer, Integer&gt;() {
-            public Integer apply(Integer integer) {
-                return integer * integer;
-            }
-        }, new Function&lt;Integer, Function&lt;Integer, Integer&gt;&gt;() {
-            public Function&lt;Integer, Integer&gt; apply(final Integer a) {
-                return new Function&lt;Integer, Integer&gt;() {
-                    public Integer apply(final Integer b) {
-                        return a + b;
-                    }
-                };
-            };
-        }, 0));
-                    </code></pre>
-                    </section>
-                    
-                    <section>
-                    <pre><code class="java" data-trim>
 Executors.newSingleThreadExecutor().submit(new Runnable() {
     public void run() {
         // ...
@@ -304,19 +299,19 @@ Collections.sort(collection, new Comparator&lt;T&gt;() {
                     
                     <section>
                     <pre><code class="java" data-trim>
-List&lt;String&gt; strings =
-    Lists.newArrayList("Gray", "Michael", "Caroline", "Martin");
-Predicate&lt;String&gt; and = Predicates.or(
-                             new Predicate&lt;String&gt;() {
-                                 public boolean apply(String o) {
-                                     return o.startsWith("M");
-                                 }
-                             }, new Predicate&lt;String&gt;() {
-                                 public boolean apply(String o) {
-                                     return o.startsWith("C");
-                                 }
-                             }
-);
+List&lt;String&gt; presenters =
+    Lists.newArrayList("Gray", "Michael", "Caroline", "Will");
+Predicate&lt;String&gt; query = Predicates.or(
+                                 new Predicate&lt;String&gt;() {
+                                     public boolean apply(String o) {
+                                         return o.startsWith("M");
+                                     }
+                                 }, new Predicate&lt;String&gt;() {
+                                     public boolean apply(String o) {
+                                         return o.startsWith("C");
+                                     }
+                                 });
+Collections2.filter(presenters, query);
                     </code></pre>
                     </section>
                 </section>
@@ -327,33 +322,105 @@ Predicate&lt;String&gt; and = Predicates.or(
                     </section>
                     
                     <section>
-                    <pre><code class="java" data-trim>
+                        <h3>Everything until now has been Java 7 thanks to</h3>
+                        <pre><code class="java" data-trim>
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-                    </code></pre>
+                        </code></pre>
                     </section>
                     
                     <section>
-                    <pre><code class="java" data-trim>
+                        <pre><code class="java" data-trim>
 import java.util.function.Function;
 import java.util.function.Predicate;
-                    </code></pre>
-                    <h3>(not quite)</h3>
+                        </code></pre>
+                        <h4>(not quite)</h4>
+                    </section>
+                    
+                    <section>
+                        <h3>Java 8 gives us</h3>
+                        <ul>
+                            <li class="fragment">Lambda syntax</li>
+                            <li class="fragment">Streams</li>
+                            <li class="fragment">Related goodness like method references</li>
+                        </ul>
+                    </section>
+                    
+                    <section>
+                        <pre><code class="java" data-trim>
+final List&lt;String&gt; presenters =
+    Arrays.asList("Gray", "Michael", "Caroline", "Martin");
+presenters.stream()
+       .filter(s -> s.startsWith("G") || s.startsWith("M"))
+       .forEach(s -> System.out.println(s));
+                        </code></pre>
+                        <h4>(yes, that's real Java)</h4>
+                    </section>
+                    
+                    <section>
+                        <pre><code class="java" data-trim>
+final List&lt;String&gt; presenters =
+    Arrays.asList("Gray", "Michael", "Caroline", "Martin");
+presenters.stream()
+       .filter(s -> s.startsWith("G") || s.startsWith("M"))
+       .forEach(System.out::println);
+                        </code></pre>
+                        <h4>(method reference)</h4>
+                    </section>
+                    
+                    <section>
+                        <h3>How does this work under the hood?</h3>
+                        <ul>
+                            <li class="fragment"><code>Stream</code></li>
+                            <li class="fragment"><code>@FunctionalInterface</code></li>
+                        </ul>
+                    </section>
+                    
+                    <section>
+                        <h3>Streams support</h3>
+                        <ul>
+                            <li class="fragment"><code>map</code></li>
+                            <li class="fragment"><code>flatMap</code></li>
+                            <li class="fragment"><code>filter</code></li>
+                            <li class="fragment"><code>reduce</code></li>
+                            <li class="fragment"><code>findFirst</code></li>
+                        </ul>
+                    </section>
+                    
+                    <section>
+                        <pre><code class="java" data-trim>
+final List&lt;String&gt; presenters =
+    Arrays.asList("Gray", "Michael", "Caroline", "Martin");
+presenters.parallelStream()
+       .filter(s -> s.startsWith("G") || s.startsWith("M"))
+       .forEach(System.out::println);
+                        </code></pre>
+                    </section>
+                    
+                    <section>
+                        <pre><code class="java" data-trim>
+package java.util.function;
+/* ... */
+@FunctionalInterface
+public interface Predicate&lt;T&gt; {
+    /* ... */
+    boolean test(T t);
+    /* other great default methods */
+}
+                        </code></pre>
                     </section>
                 </section>
                 
                 <section>
                     <section>
-                        <h2>Exhibit A:</h2><code>Option</code>
+                        <h2>One other useful thing:</h2><code>Option</code>
                     </section>
                     
                     <section>
                         <h2>Functional languages</h2>
                         <h2>love Option</h2>
                     </section>
-                </section>
-                
-                <section>
+                    
                     <section>
                         <pre><code class="scala" data-trim>
 scala> val x = List((1,2)).toMap
@@ -372,11 +439,21 @@ scala> x.getOrElse(4, 5)
 res4: Option[Int] = 5
                         </code></pre>
                     </section>
-                </section>
-                
-                <section>
+                    
                     <section>
-                        <h2>What does <code>null</code> mean?</h2>
+                        <h3>What does <code>null</code> mean?</h3>
+                    </section>
+                    
+                    <section>
+                        <h3>...and it's everywhere</h3>
+                    </section>
+                    
+                    <section>
+                        <img src="img/nysoh-npe.jpg" alt="New York State of Health NPE" />
+                    </section>
+                    
+                    <section>
+                        <img src="img/sonatype-null.png" alt="Sonatype null" />
                     </section>
                     
                     <section>
@@ -392,12 +469,41 @@ bar.get(); // IllegalStateException
 bar.or(5); // 5
                         </code></pre>
                     </section>
-                    
                     <section>
                         <h3>Why is this handy?</h3>
                         <ul>
-                            <li class="fragment">No <code>NullPointerException</code>s. Ever.
-                            <li class="fragment">You're required to handle every case.</li>
+                            <li class="fragment">No more <code>NullPointerException</code>s.</li>
+                            <li class="fragment">You're urged to handle every case.</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h3>...in Guava <strong>and</strong> in Java 8.</h3>
+                        <pre><code class="java" data-trim>
+import com.google.common.base.Optional;
+/* or */
+import java.util.Optional;
+                        </code></pre>
+                    </section>
+                </section>
+                
+                <section>
+                    <section>
+                        <h3>In short</h3>
+                        <ul>
+                            <li class="fragment">Java 8's lambda syntax doesn't change that much.</li>
+                        </ul>
+                    </section>
+                    
+                    <section>
+                        <img src="img/intellij.png" alt="IntelliJ screenshot showing code folding" />
+                    </section>
+                    
+                    <section>
+                        <h3>In short</h3>
+                        <ul>
+                            <li>Java 8's lambda syntax doesn't change that much.</li>
+                            <li class="fragment">Java 8 does more to harness the underlying power that FP-style programs provide with constructs like <code>Stream</code>s.</li>
+                            <li class="fragment">You can harness many of the benefits of functional thinking in Java today if you try for immutability, minimal state, and vigorous separation of concerns.</li>
                         </ul>
                     </section>
                 </section>
