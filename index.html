@@ -348,7 +348,7 @@ import java.util.function.Predicate;
                     <section>
                         <pre><code class="java" data-trim>
 final List&lt;String&gt; presenters =
-    Arrays.asList("Gray", "Michael", "Caroline", "Martin");
+    Arrays.asList("Gray", "Michael", "Caroline", "Will");
 presenters.stream()
        .filter(s -> s.startsWith("G") || s.startsWith("M"))
        .forEach(s -> System.out.println(s));
@@ -359,7 +359,7 @@ presenters.stream()
                     <section>
                         <pre><code class="java" data-trim>
 final List&lt;String&gt; presenters =
-    Arrays.asList("Gray", "Michael", "Caroline", "Martin");
+    Arrays.asList("Gray", "Michael", "Caroline", "Will");
 presenters.stream()
        .filter(s -> s.startsWith("G") || s.startsWith("M"))
        .forEach(System.out::println);
@@ -388,11 +388,33 @@ presenters.stream()
                     
                     <section>
                         <pre><code class="java" data-trim>
-final List&lt;String&gt; presenters =
-    Arrays.asList("Gray", "Michael", "Caroline", "Martin");
-presenters.parallelStream()
+final List&lt;String&gt; strings = Arrays.asList("Gray", "Michael", "Caroline", "Will");
+strings.stream()
        .filter(s -> s.startsWith("G") || s.startsWith("M"))
        .forEach(System.out::println);
+strings.stream()
+       .allMatch(s -> s.length() > 3); // true
+strings.stream()
+       .count();                       // 4
+strings.stream()
+       .map(String::toUpperCase)
+       .collect(Collectors.joining()); // GRAYMICHAELCAROLINEWILL
+                        </code></pre>
+                    </section>
+                    
+                    <section>
+                        <pre><code class="java" data-trim>
+final List&lt;String&gt; strings = Arrays.asList("Gray", "Michael", "Caroline", "Will");
+strings.parallelStream()
+       .filter(s -> s.startsWith("G") || s.startsWith("M"))
+       .forEach(System.out::println);
+strings.parallelStream()
+       .allMatch(s -> s.length() > 3); // true
+strings.parallelStream()
+       .count();                       // 4
+strings.parallelStream()
+       .map(String::toUpperCase)
+       .collect(Collectors.joining()); // GRAYMICHAELCAROLINEWILL
                         </code></pre>
                     </section>
                     
@@ -444,7 +466,7 @@ trait Function1[-T1, +R] extends AnyRef { self =>
                     
                     <section>
                         <h2>Functional languages</h2>
-                        <h2>love Options</h2>
+                        <h2>love options</h2>
                     </section>
                     
                     <section>
