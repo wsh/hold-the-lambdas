@@ -4,9 +4,9 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>Calculus, Not Rocket Science</title>
+		<title>Hold the Lambdas!</title>
 
-		<meta name="description" content="An introduction to functional programming for the May Lab49 tech breakfast.">
+		<meta name="description" content="Functional programming for the working Java programmer--given at DevIgnition 2013.">
 		<meta name="author" content="Will Hayworth">
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
@@ -38,8 +38,8 @@
 			<div class="slides">
 
 				<section>
-					<h1>Calculus, Not Rocket Science</h1>
-					<h3>Or, What FP Can Give You in an OO World</h3>
+					<h1>Hold the Lambdas!</h1>
+					<h3>Functional Programming in Java Today</h3>
 					<p>
 						<small><a href="http://willhayworth.com">Will Hayworth</a> / <a href="http://twitter.com/_wsh">@_wsh</a></small>
 					</p>
@@ -47,7 +47,8 @@
 						<small><a href="http://lab49.com">Lab49</a></small>
 					</p>
 					<p>
-						<small>May 17, 2013</small>
+					    <small>DevIgnition</small>
+						<small>December 6, 2013</small>
 					</p>
 				</section>
 
@@ -58,120 +59,69 @@
 				<section>
 					<h2>What are functions?</h2>
 					<ul>
-					    <li class="fragment">Computation is function application</li>
-					    <li class="fragment">Functions are free variables with operations</li>
+					    <li class="fragment">Functions are free variables with operations to be performed on them.</li>
 					    <li class="fragment">Application (or partial application) entails resolving those variables</li>
 					</ul>
 				</section>
 				
 				<section>
-					<h2>What are objects?</h2>
-					<ul>
-					    <li class="fragment"><strong>Smalltalk</strong>: pure state (fields + messages)</li>
-					    <li class="fragment"><strong>Java/C++</strong>: state + functions</li>
-					    <li class="fragment"><strong>Ruby</strong>: kind of both?</li>
-					</ul>
-				</section>
-				
-				<section>
-					<h2>What's FP?</h2>
-				</section>
-				
-				<section>
+				    <section>
+					    <h2>What's functional <strong>programming</strong>?</h2>
+					</section>
 					<section>
 					    <h2>Is it...</h2>
 					    <ul>
-					        <li class="fragment">First-class functions?</h2>
-					        <li class="fragment">Not having side effects?</h2>
-					        <li class="fragment">(Referential transparency?)</h2>
+					        <li class="fragment">First-class functions? Lambda syntax?</li>
+					        <li class="fragment">Not having side effects? Monads?</li>
+					        <li class="fragment">Whatever startups are doing?</li>
 					    </ul>
 					</section>
 					<section>
-					    <p>
-					        <blockquote>What is a “functional language”? If it’s a language with first-class functions, <strong>then C is a functional language</strong>.  If it’s a language that disallows hidden side-effects, <strong>then Haskell isn’t a functional language.</strong></blockquote>
-					    </p>
-					    <p style="text-align: right;"><small>&mdash; our own <a href="http://northhorizon.net/2010/interview-with-kalani-thielen-trends-in-programming-languages/">Kalani Thielen</a></small></p>
-					    <p>
-					        
-					    </p>
+					    <h2>It's a way of thinking that emphasizes</h2>
+					    <ul>
+					        <li class="fragment">Immutability</li>
+					        <li class="fragment"><strong>Really</strong> separating your concerns</li>
+					    </ul>
 					</section>
 				</section>
 				
 				<section>
 			        <section>
-                        <h2>FP as a Modality</h2>
-                        <h2>not a family</h2>
+                        <h2>Immutability</h2>
                     </section>
                     
                     <section>
-                        <h2>Transformations</h2>
-                        <h2>Not iterations</h2>
+                        <pre><code class="java" data-trim>
+public static int sumOfSquares(int[] input){
+    int sum = 0;
+    for(int i: input){
+        sum += i * i;
+    }
+    return sum;
+}
+                        </code></pre>
                     </section>
                     
                     <section>
-                        <h2>Constrained state</h2>
-                        <h2>Local over global</h2>
-                    </section>
-				</section>
-				
-				<section>
-			        <section>
-                        <h2>How does this work?</h2>
-                    </section>
-                    
-                    <section>
-                    <pre><code class="ruby" data-trim>
-foo = [1,2,3,4,5]
-for i in (0...foo.size)
-    foo[i] = foo[i] * 2
-end
+                    <pre><code class="scala" data-trim>
+scala> val integers = List(1,2,3,4,5)
+integers: List[Int] = List(1, 2, 3, 4, 5)
 
-foo
-# => [2,4,6,8,10]
+scala> integers.map(x => x * 2)
+res0: List[Int] = List(2, 4, 6, 8, 10)
                     </code></pre>
                     </section>
                     
                     <section>
-                    <pre><code class="ruby" data-trim>
-foo = [1,2,3,4,5]
-bar = []
-for element in foo
-    bar << element * 2
-end
-
-foo
-# => [1,2,3,4,5]
-
-bar
-# => [2,4,6,8,10]
-                    </code></pre>
-                    </section>
-                    
-                    <section>
-                    <pre><code class="ruby" data-trim>
-foo = [1,2,3,4,5]
-foo.map {|x| x * 2}
-# => [2,4,6,8,10]
-                    </code></pre>
-                    </section>
-				</section>
-				
-				<section>
-			        <section>
-                        <h2>Why do this?</h2>
-                    </section>
-                    
-                    <section>
-                    <pre><code class="ruby" data-trim>
-foo = [1,2,3,4,5]
-foo.map {|x| x * 2}
-                    </code></pre>
-                    </section>
-                    
-                    <section>
-                    <pre><code class="ruby" data-trim>
-foo = some_dataset
-foo.map {|x| costly_operation(x)}.reduce {|m, o| aggregation(m, o)}
+                    <pre><code class="java" data-trim>
+List&lt;Integer&gt; integers = Lists.newArrayList(1, 2, 3, 4, 5);
+Function&lt;Integer, Integer&gt; doubler = new Function&lt;&gt;() {
+    @Override
+    public Integer apply(@Nullable final Integer integer) {
+        return integer.intValue() * 2;
+    }
+};
+final Collection&lt;Integer&gt; doubled = Collections2.transform(integers, doubler);
                     </code></pre>
                     </section>
 				</section>
