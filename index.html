@@ -95,7 +95,7 @@ sum(2, 3);
 					    <ul>
 					        <li class="fragment">First-class functions? Lambda syntax?</li>
 					        <li class="fragment">Not having side effects? Monads?</li>
-					        <li class="fragment">Whatever startups are doing?</li>
+					        <li class="fragment">Whatever Hacker News wants it to be?</li>
 					    </ul>
 					</section>
 					<section>
@@ -194,10 +194,7 @@ public static int sumSquares(final Integer[] input) {
                     </section>
                     
                     <section>
-                        <h2>(Probably more) safety</h2>
-                    </section>
-                    
-                    <section>
+                        <h3>(Probably more) safety</h3>
                         <pre><code class="java" data-trim>
 public static int sumSquares(int[] input) {
     for(int i=0; i&lt;input.length; i++){
@@ -213,10 +210,7 @@ public static int sumSquares(int[] input) {
                     </section>
                     
                     <section>
-                        <h2>(Possibly better) performance</h2>
-                    </section>
-                    
-                    <section>
+                        <h3>(Possibly better) performance</h3>
                         <a href="http://research.google.com/archive/mapreduce.html"><img src="img/google-mapreduce.png" alt="MapReduce paper from Google" /></a>
                     </section>
 				</section>
@@ -248,7 +242,7 @@ public static int sumSquares(final Collection&lt;Integer&gt; input) {
                     <section>
                         <pre><code class="java" data-trim>
 public static &lt;T&gt; int mapThenSum(final Collection&lt;T&gt; input,
-                                 Function&lt;T, Integer&gt; processor) {
+                                 final Function&lt;T, Integer&gt; processor) {
     final Collection&lt;Integer&gt; processed =
             Collections2.transform(input, processor);
     int sum = 0;
@@ -333,6 +327,7 @@ public static &lt;T, U, V&gt; V mapReduce(final Iterator&lt;T&gt; input,
                     </section>
                     
                     <section>
+                        <h3>You already do this.</h3>
                         <pre><code class="java" data-trim>
 Executors.newSingleThreadExecutor().submit(new Runnable() {
     public void run() {
@@ -340,9 +335,6 @@ Executors.newSingleThreadExecutor().submit(new Runnable() {
     }
 });
                         </code></pre>
-                    </section>
-                    
-                    <section>
                         <pre><code class="java" data-trim>
 Collections.sort(collection, new Comparator&lt;T&gt;() {
     public int compare(T o1, T o2) {
@@ -560,12 +552,7 @@ trait Function1[-T1, +R] extends AnyRef { self =>
                 <section>
                     <section>
                         <h3>One other useful thing:</h3>
-                        <h2>Option</h2>
-                    </section>
-                    
-                    <section>
-                        <h2>Functional languages</h2>
-                        <h2>love options</h2>
+                        <h2>Optional</h2>
                     </section>
                     
                     <section>
@@ -611,10 +598,6 @@ Prelude M> M.findWithDefault 5 4 x
                     </section>
                     
                     <section>
-                        <h3>...it's everywhere</h3>
-                    </section>
-                    
-                    <section>
                         <img src="img/nysoh-npe.jpg" alt="New York State of Health NPE" />
                     </section>
                     
@@ -635,13 +618,7 @@ bar.get(); // IllegalStateException
 bar.or(5); // 5
                         </code></pre>
                     </section>
-                    <section>
-                        <h3>Why is this handy?</h3>
-                        <ul>
-                            <li class="fragment">No more <code>NullPointerException</code>s.</li>
-                            <li class="fragment">You're urged to handle every case.</li>
-                        </ul>
-                    </section>
+                    
                     <section>
                         <h3>...in Guava <strong>and</strong> in Java 8.</h3>
                         <pre><code class="java" data-trim>
