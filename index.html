@@ -56,9 +56,9 @@
 				    <section>
                         <h2>What are functions?</h2>
                         <ul>
-                            <li class="fragment">Computation is function application.</li>
                             <li class="fragment">Functions consist of operations and any number of free variables to be used in them.</li>
                             <li class="fragment">Application requires resolving those variables.</li>
+                            <li class="fragment">Computation is function application.</li>
                         </ul>
 					</section>
 					
@@ -247,11 +247,10 @@ public static int sumSquares(final Collection&lt;Integer&gt; input) {
                     
                     <section>
                         <pre><code class="java" data-trim>
-public static int sumProcessed(final Collection&lt;Integer&gt; input,
-    Function&lt;Integer, Integer&gt; processor) {
-    
+public static &lt;T&gt; int mapThenSum(final Collection&lt;T&gt; input,
+                                 Function&lt;T, Integer&gt; processor) {
     final Collection&lt;Integer&gt; processed =
-            Collections2.transform(Arrays.asList(input), processor);
+            Collections2.transform(input, processor);
     int sum = 0;
     for(int i: processed){
         sum += i;
@@ -263,25 +262,25 @@ public static int sumProcessed(final Collection&lt;Integer&gt; input,
                     
                     <section>
                         <pre><code class="java" data-trim>
-public static &lt;T&gt; T reduce(final Collection&lt;T&gt; input,
-        final Function&lt;T, T&gt; mapper,
-        final Function&lt;T, Function&lt;T, T&gt;&gt; reducer, final T initial) {
-        
-        final Collection&lt;T&gt; mapped =
-                Collections2.transform(input, mapper);
-        T result = initial;
-        for(T value : mapped){
-            final Function&lt;T, T&gt; toApply = reducer.apply(result);
-            result = toApply.apply(value);
-        }
-        return result;
+public static &lt;T, U, V&gt; V mapReduce(final Collection&lt;T&gt; input,
+                                    final Function&lt;T, U&gt; mapper,
+                                    final Function&lt;V, Function&lt;U, V&gt;&gt; reducer,
+                                    final V initial) {
+    final Collection&lt;U&gt; mapped =
+            Collections2.transform(input, mapper);
+    V result = initial;
+    for(U value : mapped){
+        final Function&lt;U, V&gt; toApply = reducer.apply(result);
+        result = toApply.apply(value);
+    }
+    return result;
 }
                         </code></pre>
                     </section>
                     
                     <section>
                         <pre><code class="java" data-trim>
- reduce(Lists.newArrayList(1, 2), 
+ mapReduce(Lists.newArrayList(1, 2), 
         new Function&lt;Integer, Integer&gt;() {
             public Integer apply(final Integer integer) {
                 return integer * integer;
@@ -300,14 +299,14 @@ public static &lt;T&gt; T reduce(final Collection&lt;T&gt; input,
                     
                     <section>
                         <pre><code class="java" data-trim>
-public static &lt;T&gt; T reduce(final Iterator&lt;T&gt; input, final Function&lt;T, T&gt; mapper,
-                           final Function&lt;T, Function&lt;T, T&gt;&gt; reducer,
-                           final T initial){
-    if(!input.hasNext()){
+public static &lt;T, U, V&gt; V mapReduce(final Iterator&lt;T&gt; input, 
+                                    final Function&lt;T, U&gt; mapper,
+                                    final Function&lt;V, Function&lt;U, V&gt;&gt; reducer,
+                                    final V initial) {
+    if (!input.hasNext()) {
         return initial;
     } else {
-        final T next =
-            reducer.apply(initial).apply(mapper.apply(input.next()));
+        final V next = reducer.apply(initial).apply(mapper.apply(input.next()));
         return reduce(input, mapper, reducer, next);
     }
 }
@@ -316,7 +315,7 @@ public static &lt;T&gt; T reduce(final Iterator&lt;T&gt; input, final Function&l
                     
                     <section>
                         <pre><code class="java" data-trim>
- reduce(Iterators.forArray(1, 2), 
+ mapReduce(Iterators.forArray(1, 2), 
         new Function&lt;Integer, Integer&gt;() {
             public Integer apply(final Integer integer) {
                 return integer * integer;
@@ -379,7 +378,7 @@ Collections2.filter(presenters, query); // { "Michael", "Caroline" }
                         <pre><code class="java" data-trim>
 Collection&lt;String&gt; presenters =
     Lists.newArrayList("Gray", "Michael", "Caroline", "Will");
-final Function&lt;String, String&gt; capitalsReverse =
+final Function&lt;String, String&gt; capitalizeAndReverse =
         Functions.compose(new Function&lt;String, String&gt;() {
                               public String apply(final String s) {
                                   return s.toUpperCase();
@@ -397,7 +396,7 @@ final Function&lt;String, String&gt; capitalsReverse =
                               }
                           }
         );
-Collections2.transform(presenters, capitalsReverse); // { "YARG", "LEAHCIM", "ENILORAC", "LLIW" }
+Collections2.transform(presenters, capitalizeAndReverse); // { "YARG", "LEAHCIM", "ENILORAC", "LLIW" }
                         </code></pre>
                     </section>
                 </section>
